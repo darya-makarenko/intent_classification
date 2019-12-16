@@ -1,0 +1,7 @@
+flask
+flask_restplus
+pandas
+gunicorn==20.0.0
+nltk
+sklearn
+pymorphy2
