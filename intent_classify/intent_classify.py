@@ -21,11 +21,14 @@ with open('positive.csv', 'r', encoding='utf-8') as f:
     
 with open('negative.csv', 'r', encoding='utf-8') as f:
     lines_neg = f.readlines()
+    
+f = open("stopwords.txt", "r", encoding="utf8")
+stopwords = f.readlines()
+stopwords = [word.strip() for word in stopwords]
 
 nlp = spacy.load('xx_ent_wiki_sm')
 df = pd.DataFrame([[line.strip(), '0', 'pos'] for line in lines_pos] +  [[line.strip(), '1', 'neg'] for line in lines_neg], columns=['text', 'label', 'label_text'])
-nltk.download('stopwords')
-stopwords = stopwords.words('russian')
+df = df.sample(frac=1)
 stemmer = SnowballStemmer("russian") 
 
 
@@ -33,7 +36,7 @@ def cleanup_text(text, logging=False):
     
     doc = nlp(text, disable=['parser', 'ner'])
     tokens = [tok.lemma_.lower().strip() for tok in doc]
-    tokens = [tok for tok in tokens if tok not in punctuations]
+    tokens = [tok for tok in tokens if tok not in punctuations and tok not in stopwords]
     tokens = [stemmer.stem(tok) for tok in tokens]
     tokens = ' '.join(tokens)
     return tokens.strip()
